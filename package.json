@@ -1,0 +1,58 @@
+{
+  "name": "downloadvideo",
+  "version": "1.0.0",
+  "description": "Download Video Files",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "npm run copy-src && webpack  --mode development --watch",
+    "start": "webpack-dev-server  --mode development --progress --inline",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-src": "ncp popup dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/praboop/downloadflash.git"
+  },
+  "keywords": [
+    "Download",
+    "Video"
+  ],
+  "author": "Prabhu Periasamy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/praboop/downloadflash/issues"
+  },
+  "homepage": "https://github.com/praboop/downloadflash#readme",
+  "dependencies": {
+    "autoprefixer": "^8.2.0",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "3.3.7",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.1",
+    "postcss-loader": "^2.1.3",
+    "react": "^0.14.9",
+    "react-bootstrap": "^0.30.10",
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.2",
+    "react-dom": "^0.14.9",
+    "node-sass": "^4.8.3",
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "sass-loader": "^6.0.7",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.28.11",
+    "file-loader": "^1.1.11",
+    "style-loader": "^0.20.3",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.3.0",
+    "webpack-cli": "^2.0.13"
+  }
+}

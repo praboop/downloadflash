@@ -1,0 +1,92 @@
+.panel, .panel-body {
+	border: 0;
+}
+
+/*
+ Page Width
+*/
+li {
+	width: 800px;
+	height: auto;
+}
+
+.button-wrapper > button {
+	margin-bottom: 5px;
+}
+
+.download, .btn-group-vertical > button {
+	border-radius:10px !important;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.download, .btn-group-vertical > button{
+	margin-bottom:10px;
+}
+
+.customBtn {
+	margin-bottom:10px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.download {
+	margin-top:15px;
+	margin-left:15px;
+}
+
+.summary {
+	border: 5px dotted pink;
+}
+
+.download:active, .customBtn:active , .toggleBtn:active, .btn-group-vertical > button:active {
+	transform: translateY(3px);
+}
+
+.DottedBox {
+	margin: 40px;
+	border: 5px dotted pink;
+  }
+  
+  .DottedBox_content {
+	font-size: 15px;
+	text-align: center;
+	}
+	
+ .item {
+		display: inline-block;
+		background-color: #2a345a;
+		padding: 2px 5px 5px;
+		border-radius: 5px;
+		color: #fff;
+		margin: 2px;
+	}
+.fixedWidth {
+	height: 100px;
+}
+.item > button {
+		background-color: transparent;
+		color: #fff;
+		border: 0;
+		font-weight: 900;
+		cursor: pointer;
+		vertical-align: bottom;
+	}
+
+	.item > button:hover {
+		color: #ccc;
+	}
+
+	.full-width {
+		width: 100%
+	}
+
+	.hidden {
+		display: none;
+	}
+
+	.show {
+		display: block;
+	}
+
+	.nav > li {
+		position: inherit;
+	}

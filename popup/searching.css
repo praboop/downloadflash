@@ -1,0 +1,37 @@
+.findElement {
+    background-color: yellow;
+}
+
+.search_input { 
+    border-radius:15px;
+	-moz-border-radius:15px; 
+	-webkit-border-radius:15px;
+	padding:4px 10px 5px 30px;
+	margin:0px;
+	background: url('../images/search.png') no-repeat 7px 5px; 
+
+}
+
+input[type=text] {
+	border:1px solid #acb1b7;
+	background-color:#fcfcfc;
+}
+
+a.clearlink {
+    height: 12px;
+    width: 12px;
+    border: 0px solid;
+    margin-left: -25px;
+    z-index: 2000;
+    zoom: 1;
+    display: -moz-inline-stack;
+    display: inline-block;
+    *display: inline;
+    background-position: center center;
+    background: url("../images/close.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+}
+
+.search_div {
+    display: inline;
+}
