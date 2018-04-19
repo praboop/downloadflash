@@ -109,7 +109,7 @@ class Download extends React.Component {
 					(
 						<input type="checkbox" onClick={checkAction.bind(this, urlDetail)}/>
 					)}</td>
-					<td>{urlDetail.url}</td>
+					<td>{decodeURIComponent(urlDetail.url)}</td>
 				</tr>
 				)
 		);

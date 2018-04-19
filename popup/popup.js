@@ -77,8 +77,11 @@ $(document).ready(function () {
 
 		for (index in files) {
 			try {
+                var decodedUrl = decodeURIComponent(files[index]);
+                var fileName = decodedUrl.substring(decodedUrl.lastIndexOf('/')+1);
 				var downloading = browser.downloads.download({
-                    url: files[index]
+                    url: decodedUrl,
+                    filename: fileName
                 });
 
 				downloading.then(onStartedDownload, onFailed);

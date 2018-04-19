@@ -38,7 +38,7 @@ class Status extends React.Component {
 				.map( item  => 
 				(
 					<tr key={item.id}>
-						<td>{item.url}</td>
+						<td>{decodeURIComponent(item.url)}</td>
 						<td>{item.state=='in_progress' ? "downloading..." : item.state}</td>
 						<td className='hidden'>{item.totalBytes}</td>
 						<td className='hidden'>{item.bytesReceived}</td>
