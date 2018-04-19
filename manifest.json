@@ -2,7 +2,7 @@
 	"description": "Downloads files in the current Web page",
 	"manifest_version": 2,
   "name": "Download Links",
-  "version": "2.0",
+  "version": "2.1",
 
 	"icons": {
     "48": "icons/RedButton48.ico",
