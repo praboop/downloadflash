@@ -7,7 +7,7 @@ $(document).ready(function () {
 		//	alert("REUSLT IS " + (typeof result));
 		//	document.body.innerHTML = "SUCCESS: " + result;
 		try {
-            g_allUrls = result.toString().split(",");
+            g_allUrls = result[0];
             console.log("========> All URLS UPDATED TO: " + JSON.stringify(g_allUrls));
             window.extension.downloadlinks.showPopup();
             //alert('To Download: ' + result.toString().split(","))
