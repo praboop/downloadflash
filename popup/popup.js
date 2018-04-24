@@ -99,7 +99,6 @@ $(document).ready(function () {
 	});
     executing.then(onExecuted, onError);
 
-   window.extension.downloadlinks.showPopup();
 });
 
 

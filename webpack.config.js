@@ -1,6 +1,7 @@
 const {resolve} = require('path');
 const path = require('path');
 var webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: './react/app.js',
@@ -33,5 +34,14 @@ module.exports = {
         use: 'file-loader?name=icons/[name].[ext]'
       }
     ]
-  }
+  },
+  plugins: 
+    [
+      new CopyWebpackPlugin([
+        { from: 'manifest.json', to: './' },
+        { from: 'icons/*', to: './' },
+        { from: 'js/*', to: './' }
+      ])
+    ]
+  
 };
