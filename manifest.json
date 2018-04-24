@@ -1,31 +1,22 @@
 {
-	"description": "Downloads files in the current Web page",
-	"manifest_version": 2,
+  "description": "Downloads Files in the current Web page",
+  "manifest_version": 2,
   "name": "Download Links",
-  "version": "2.1",
-
-	"icons": {
+  "version": "2.2",
+  "icons": {
     "48": "icons/RedButton48.ico",
     "96": "icons/RedButton96.ico"
-	},
-	
-	"browser_action": {
-		"browser_style" : true,
+  },
+  "browser_action": {
+    "browser_style": true,
     "default_icon": "icons/RedButton96.ico",
     "default_title": "Download Files in this Web page",
-    "default_popup": "dist/popup.html"
+    "default_popup": "popup.html"
   },
-  
-	"permissions": [
+  "permissions": [
     "storage",
     "activeTab",
     "downloads",
-		"downloads.open",
-		"webRequest",
-	  "<all_urls>"
-	],
-  
-	"background": {
-	  "scripts": ["background.js"]
-	}
-  }
+    "downloads.open"
+  ]
+}
