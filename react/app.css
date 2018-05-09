@@ -6,7 +6,7 @@
  Page Width
 */
 li {
-	width: 800px;
+
 	height: auto;
 }
 
@@ -24,9 +24,25 @@ li {
 }
 
 .customBtn {
-	margin-bottom:10px;
+	text-align: left;
+	width: 180px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
+
+.toggleBtn {
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.markBtn {
+	height: 31px;
+	width: 80px;
+
+	padding: 0;
+	border: 0;
+}
+
 
 .download {
 	margin-top:15px;
@@ -60,8 +76,9 @@ li {
 		margin: 2px;
 	}
 .fixedWidth {
-	height: 100px;
+	max-height: 100px;
 }
+
 .item > button {
 		background-color: transparent;
 		color: #fff;
@@ -89,4 +106,100 @@ li {
 
 	.nav > li {
 		position: inherit;
+	}
+
+	.big-checkbox {
+
+	}
+
+
+	.btnHeight {
+		height: 31px;
+	}
+
+	  .labelA1 {
+		white-space: nowrap;
+		color: #fff;
+		padding: 8px;
+		margin-left: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	  }
+
+	  .spanA1 {
+		margin-left: 3px;
+	  }
+
+	  .dl-badge-info {
+		background-color: #3927ae;
+	  }
+
+	  .mediaIcon {
+		position: relative;
+		align-content: center;
+		left: 10px;
+		font-size: 15px;
+		font-weight: bolder;
+		width: 15px;
+		height: 15px;
+		margin-right: 25px;
+		float: left;
+	  }
+
+	  .arrowIcons {
+		align-content: center;
+		position: relative;
+		margin-left: 5px;
+		width: 30px;
+		height: 30px;
+	  }
+
+	  .toggleClass {
+		font-size: 1.4rem;
+		font-weight: bold;
+	  }
+
+	  .vMiddleAlign {
+		  padding-top: 0px;
+		  padding-bottom: 0px;
+	  }
+
+	  .table thead th {
+		vertical-align: middle;	
+	}
+
+	.all-copy {  
+		-webkit-user-select: all;  /* Chrome all / Safari all */
+		-moz-user-select: all;     /* Firefox all */
+		-ms-user-select: all;      /* IE 10+ */
+		user-select: all;          /* Likely future */   
+	  }
+
+	  .settings {
+		width: 25px;
+		height: 25px;
+		float: right;
+		border-radius:10px !important;
+		box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	  }
+
+	  .settingsIcon {
+		position: absolute;
+		margin-left: -10px;
+		margin-top: -10px;
+		width: 20px;
+		height: 20px;
+	  }
+
+      .modal-open {
+		padding-right: 0 !important;
+	  }
+	  /* Force scrollbar. on click of settings icon, ui add that area.
+	  html {
+		overflow-y: scroll !important;
+	  }
+	  */
+
+	.header {
+		display: inline-block; 
 	}

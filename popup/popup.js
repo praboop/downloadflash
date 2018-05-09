@@ -3,23 +3,19 @@ $(document).ready(function () {
 
     console.log("in updated ready........");
 
+
 	function onExecuted(result) {
-		//	alert("REUSLT IS " + (typeof result));
-		//	document.body.innerHTML = "SUCCESS: " + result;
 		try {
             g_allUrls = result[0];
-            console.log("========> All URLS UPDATED TO: " + JSON.stringify(g_allUrls));
+            console.log("========> " + g_allUrls.length + " URLS DETECTED: " + JSON.stringify(g_allUrls));
             window.extension.downloadlinks.showPopup();
-            //alert('To Download: ' + result.toString().split(","))
 			//download(result.toString().split(","));
 		} catch (error) {
-			document.body.innerHTML += "SOME ERROR: " + error.message;
+            console.log("SOME ERROR: " + error.stack);
 		}
     }
     
     function onError(error) {
-        alert(error);
-        document.body.innerHTML = "FAILURE: " + result;
         console.log(`Error: ${error}`);
     }
 
@@ -33,7 +29,6 @@ $(document).ready(function () {
 	window.extension.downloadlinks.download = function(files) {
 
         function onStartedDownload(itemId) {
-            //document.body.innerHTML += `Started downloading: ${itemId}`;
             console.log(`Started downloading: ${itemId}`);
             g_status.updateData(`${itemId}`);
         }
@@ -58,7 +53,7 @@ $(document).ready(function () {
 
         function handleChanged(item) {	
 
-            console.log('SOmething changed ---->' + JSON.stringify(item));
+            console.log('Item changed ---->' + JSON.stringify(item));
             g_status.itemChanged(item);
             /*	
             document.body.innerHTML = "";	
@@ -87,7 +82,7 @@ $(document).ready(function () {
 				downloading.then(onStartedDownload, onFailed);
 
 			} catch (e) {
-				document.body.innerHTML += "  ERROR: " + e.message;
+				console.log("  ERROR: " + e.message);
 			}
 		}
 	} // End function download

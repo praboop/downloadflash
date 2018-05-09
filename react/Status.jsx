@@ -48,29 +48,31 @@ class Status extends React.Component {
 
 		return (
 			<li className={this.props.visibility}>
-			<div className="panel panel-primary">
-				<div className="panel-heading">
-					<h3 className="panel-title">Download status</h3>
+			<div className="card">
+				<div className="card-header bg-primary">
+					<h4 className="card-title text-center text-white">Download status</h4>
 				</div>
-				<div className="panel-body">
+				<div className="card-body">
 				<table className="table table-striped table-hover EasyTableSearch">
-				<thead>
+				<thead >
 					<tr>
 					<th colSpan="4">
-					    <button type="button" className="btn btn-info" onClick={this.openFolder.bind(this)}>Open Download Folder</button>
+					    <button type="button" className="btn btn-info customBtn" onClick={this.openFolder.bind(this)}>Open Download Folder</button>
 					</th>
 					</tr>
-					<tr>
+					<tr className="thead-dark">
 						<th> Filename </th>
 						<th> Status </th>
 						<th className='hidden'> File Size </th>
 						<th className='hidden'> Downloaded Size </th>
 					</tr>
-					{fileStatus}
 					</thead>
+					<tbody>
+						{fileStatus}
+					</tbody>
 					</table>
 				</div>
-				<div className="col-sm-6 text-center full-width">
+				<div className="col-sm-12 text-center full-width">
 					<button type="button" onClick={this.onExtensionNav.bind(this)} className="btn btn-primary btn-lg download">
 						<span className="glyphicon glyphicon-arrow-left"></span> Back
 					</button>

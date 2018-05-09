@@ -34,7 +34,7 @@ function fileDownloadStatusReducer(currentState, action) {
 		console.log('New model is: ' + JSON.stringify(modelCopy));
 		return modelCopy;
 	}
-	console.log("Returning empty states");
+	console.log("FileDownloadStatusReducer - Returning empty states for actionType " + actionType);
 	return [];
  
 }

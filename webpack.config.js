@@ -9,7 +9,13 @@ module.exports = {
 		path: resolve(__dirname, 'dist'),
 		filename: 'bundle.js'
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: '.',
+    host: '0.0.0.0',
+    port: 8080,
+    disableHostCheck: true
+  },
 	module: {
 		rules: [
 			{

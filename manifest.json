@@ -1,8 +1,13 @@
 {
-  "description": "Downloads Files in the current Web page",
+  "description": "Downloads files in the current Web page",
   "manifest_version": 2,
   "name": "Download Links",
-  "version": "2.2",
+  "version": "3.0",
+  "applications": {
+    "gecko": {
+      "id": "{7b15cfea-42ba-4409-9dd9-00e954f9a9ac}"
+    }
+  },
   "icons": {
     "48": "icons/RedButton48.ico",
     "96": "icons/RedButton96.ico"

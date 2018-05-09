@@ -27,3 +27,20 @@ Content Security Policy: The page’s settings blocked the loading of a resource
 Fix by:
 about:config
 security.csp.enable change to false
+
+
+# Feature Status:
+
+| Release | Feature | 
+| --- | --- |
+| 1.0 | Simple HTML UI and minimal functionality to download links |
+| 2.0 | Feature to filter files and report download status with better UI |
+| 3.0 | Feature to auto detect extensions and count in extension configuration page, UI refreshed, more extension types added, save extensions |
+| x.x | Feature to configure relative locations (to download directory) for each file type or by URL location |
+| x.x | Feature to construct download URL from user script |
+| x.x | Feature to configure max number of parallel downloads from a target site |
+| x.x | Feature to rename files |
+| x.x | Feature to display file size in filter page |
+| x.x | Feature to display image size and filter by image size in filter page (Webrequest API?) |
+| x.x | Feature to pause/cancel/delete downloaded files |
+| x.x | Feature to preview images/video/text |

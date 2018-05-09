@@ -2,22 +2,32 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
-import { Button } from 'react-bootstrap';
-import { Label } from 'react-bootstrap';
 import './app.css';
 import downloadActions from './actions';
 import Status from './Status.jsx';
+import Banner from './Banner.jsx';
+
+import arrowLeft from './icons/arrow_backward.svg';
+import arrowDownload from './icons/arrow_download.svg';
+import arrowRight from './icons/arrow_forward.svg';
+import settings from './icons/settings.svg';
+import Preferences from './Preferences.jsx';
+
+
 
 class Download extends React.Component {
 	constructor(props) {
 		super(props);
-		this.onClick = this.onClick.bind(this);
+		this.onAddNewExtn = this.onAddNewExtn.bind(this);
 	}
-	onClick() {
-		let newExtn = this.refs.textNewExtn.value;
-		console.log('new extn: ' + newExtn);
-		this.props.addNew(newExtn);
+
+	onAddNewExtn(event) {
+		if (!event.keyCode || event.keyCode == 13) {
+			let newExtn = this.refs.textNewExtn.value;
+			console.log('adding new extn: ' + newExtn);
+			this.props.addNew(newExtn);
+		}
+		//console.log('ignoring key code ' + event.keyCode);
 	}
 
 	onFilterNav() {
@@ -56,6 +66,12 @@ class Download extends React.Component {
 			extDetail => {return extDetail.download})
 			.map(extDetail => extDetail.url );
 		console.log('to start download for: ' + JSON.stringify(filteredData));
+
+		if (filteredData.length==0) {
+			this.props.showBannerAction('info', "No files have been selected for download!");
+			return;
+		}
+
 		this.props.navigateAction('page2');
 		
 		window.extension.downloadlinks.download(filteredData);
@@ -66,42 +82,93 @@ class Download extends React.Component {
 
 		console.log ('Download.jsx: reading from props ' + JSON.stringify(this.props));
 
-		let { extData, page, urlData, statusData,  pickExisting, addNew, navigateAction, toggleAction, checkAction, 
-			statDownInitAction, statItemCreatedAction, statItemChangedAction } = this.props;
+		let { page, urlData, mediaGroups, banner, statusData,  pickExisting, mediaClick, addNew, navigateAction, toggleAction, checkAction, 
+			statDownInitAction, statItemCreatedAction, statItemChangedAction, showBannerAction } = this.props;
 		// console.log('properties: ' + JSON.stringify(this.props));
 		this.toggleAction = toggleAction.bind(this);
 		this.startDownload = this.startDownload.bind(this);
 		this.statDownInitAction = statDownInitAction.bind(this);
 		this.statItemCreatedAction = statItemCreatedAction.bind(this);
 		this.statItemChangedAction = statItemChangedAction.bind(this);
+		this.showBannerAction = showBannerAction.bind(this);
 
+		/*
 		let extItems = extData.map((extDetail, index) => (
 			<button key={index} type="button" className="btn btn-info" onClick={pickExisting.bind(this, extDetail)} >{extDetail.name}</button>
 		));
+		*/
 
-		let choosenItems = extData
-				.filter(extDetail => { return extDetail.isSelected })
-				.map((extDetail, index) => (
-					<span key={index} className="item">
-						<button onClick={pickExisting.bind(this, extDetail)} type="button">x</button>
-						{extDetail.name}
-					</span>
-				));
+		console.log('Total default media groups:' + mediaGroups.length);
+
+
+		let mediaItems = [];
+		let choosenItems = [];
+		let mIndex = 0;
+		let eIndex = 0;
+		for (let media of mediaGroups) {
+			let extnItems = [];
+	
+			for (let extn of media.extensions) {
+				extnItems.push(		
+						<span key={eIndex} className="badge badge-info labelA1" onClick={pickExisting.bind(this, extn)}>
+							<input className="big-checkbox" 
+							type="checkbox" checked={extn.isSelected}>
+							</input>
+							<span className="spanA1 font-weight-normal"> {extn.name} </span>
+							<span className="badge badge-pill dl-badge-info"> {extn.count}</span>
+						</span>
+				)
+				if (extn.isSelected) {
+					choosenItems.push(
+						<span key={eIndex} className="item">
+							<button onClick={pickExisting.bind(this, extn)} type="button">x</button>
+							{extn.name}
+						</span>
+					)
+				}
+
+				eIndex++;
+			}
+			mediaItems.push(
+				<tr key={mIndex}>
+					<td>
+						<button key={mIndex++} type="button" 
+							className="btn btn-info customBtn"
+							onClick={mediaClick.bind(this, media)}>
+								<img className="mediaIcon" src={media.iconClass}/>
+								{media.mediaName}
+						</button>
+					</td>
+					<td>
+						{extnItems}
+					</td>
+				</tr>
+			)
+		};
+
 
 		let toggleBtn = (
-			<button key='toggleBtn' type="button" className="btn btn-info toggleBtn" onClick={this.toggleVisible.bind(this, urlData)} >Check/Uncheck</button>
+			<button key='toggleBtn' type="button" className="btn btn-info markBtn toggleClass toggleBtn" onClick={this.toggleVisible.bind(this, urlData)}>
+			<span>Mark</span></button>
 		);
 
 		let totalCheckedUrls = 0;
 		urlData.forEach(urlDetail => {
-			if (urlDetail.download) totalCheckedUrls++;
+			if (urlDetail.download == true) totalCheckedUrls++;
 		});
 		let urlTableRowData = urlData
 			.map((urlDetail, index) => 
-				(
+				{
+				var media = mediaGroups.filter(media => media.mediaId==urlDetail.mediaId)[0];
+
+				return(
 				<tr key={index}>
 					<td>{urlDetail.index}</td>
-					<td>{urlDetail.type}</td>
+					<td>
+						<span className={'label label-info DottedBox_content'}>
+							<img className="mediaIcon" src={media.iconClass}/>
+						</span>
+					</td>
 					<td>{urlDetail.download ?
 					(
 						<input type="checkbox" checked='true' onClick={checkAction.bind(this, urlDetail)}/>
@@ -109,9 +176,10 @@ class Download extends React.Component {
 					(
 						<input type="checkbox" onClick={checkAction.bind(this, urlDetail)}/>
 					)}</td>
-					<td>{decodeURIComponent(urlDetail.url)}</td>
+					<td className="all-copy">{decodeURIComponent(urlDetail.url)}</td>
 				</tr>
 				)
+				}
 		);
 
 		let showOnlyChecked = (
@@ -122,56 +190,96 @@ class Download extends React.Component {
 			</div>
 		);
 
+		if (!banner) {
+			banner = {visible: false};
+		}
+
+		this.bannerObj = <Banner model={banner}/>;
+
+		var gearButton = (<button type="button" 
+							className="btn btn-info settings"
+							data-toggle="modal" data-target="#exampleModal">
+							<img className="settingsIcon" src={settings}/>
+						</button>);
+		
+
+		// <div style={{"height" : "300px", "width" : "600px"}}>
+
 		return (
 			<div>
 				<ul className="nav">
+
 					<li className={this.getPageClass('page0', page)}>
-						<div className="panel panel-primary">
-							<div className="panel-heading">
-								<h3 className="panel-title">Select/Add file types to download</h3>
+						<Preferences/>
+						<div className="card">
+
+							<div className="card-header bg-primary header">
+								<h4 className="card-title text-center text-white">Select/Add file types to download {gearButton}</h4>
+								
 							</div>
-							<div className="panel-body">
-								<div className="btn-group-vertical col-xs-4 button-wrapper">
-									{extItems}
-								</div>
-								<div className="input-group col-xs-4">
-									<span className="input-group-btn">
-										<input ref="textNewExtn" type="text" className="form-control col-md-9" />
-										<button type="button" className="customBtn btn btn-info" 
-											onClick={this.onClick}>Add</button>
-									</span>
-								</div>
+							{ this.bannerObj }
+							<div className="card-body">
+								<table className="table table-striped">
+									<thead className="thead-dark">
+										<tr>
+											<th>Select by Media</th>
+											<th>Select by Extension</th>
+										</tr>
+									</thead>
+									<tbody>
+										{mediaItems}
+										<tr>
+											<td>Something else?</td>
+											<td>
+												<div className="input-group">
+													<input ref="textNewExtn" type="text" className="form-control btnHeight" 
+														placeholder="Enter extension" aria-label="Enter extension" 
+														aria-describedby="basic-addon2"
+														onKeyUp={this.onAddNewExtn}>
+													</input>
+													<div className="input-group-append">
+														<button type="button" className="toggleBtn btn btn-info" 
+																onClick={this.onAddNewExtn}>Add</button>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+
 							</div>
-							<div className="panel-footer fixedWidth">
+							<div className="card-footer">
 								{choosenItems}
-								<h4>
-									Matching files: {totalCheckedUrls}
-								</h4>
+									<h5>
+									Files to download: {totalCheckedUrls}
+									</h5>
 							</div>
-							<div className="col-sm-6 text-center full-width">
+							<div className="col-sm-12 text-center full-width">
 								<button type="button" onClick={this.onFilterNav.bind(this)} className="btn btn-primary btn-lg download">
-									Filter Files <span className="glyphicon glyphicon-arrow-right"></span> 
+								Filter Files <img className="arrowIcons" src={arrowRight}/>
 								</button>
 							</div>
 						</div>
 					</li>
 					<li className={this.getPageClass('page1', page)}>
-						<div className="panel panel-primary">
-							<div className="panel-heading">
-								<h3 className="panel-title">Verify files selected for download</h3>
+						<div className="card">
+							<div className="card-header bg-primary">
+								<h4 className="card-title text-center text-white">Verify files selected for download</h4>
 							</div>
-							<div className="panel-body">
+							{ this.bannerObj }
+							<div className="card-body">
 								<div>{showOnlyChecked}</div>
 								<table className="table table-striped table-hover EasyTableSearch">
 								<thead>
 									<tr>
 										<th colSpan="4"><input type="text" className="search_input" placeholder="search"/></th>
 									</tr>
-									<tr>
-										<th data-sort="index">#</th>
-										<th data-sort="String">Type</th>
-										<th data-sort="String">{toggleBtn}</th>
-										<th data-sort="String">URL</th>
+									<tr className="thead-dark">
+										<th data-sort="index" className="vMiddleAlign">#</th>
+										<th data-sort="String" className="vMiddleAlign">Type</th>
+										<th data-sort="String" className="vMiddleAlign">{toggleBtn}</th>
+										<th data-sort="String" className="vMiddleAlign">URL</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -179,17 +287,17 @@ class Download extends React.Component {
 								</tbody>
 								</table>								
 							</div>
-							<div className="panel-footer">
-									<h4>
+							<div className="card-footer">
+									<h5>
 										Files to download: {totalCheckedUrls}
-									</h4>
+									</h5>
 							</div>
-							<div className="col-sm-6 text-center full-width">
+							<div className="col-sm-12 text-center full-width">
 								<button type="button" onClick={this.onExtensionNav.bind(this)} className="btn btn-primary btn-lg download">
-									<span className="glyphicon glyphicon-arrow-left"></span> Back
+								<img className="arrowIcons" src={arrowLeft}/> Back
 								</button>
 								<button type="button" className="btn btn-success btn-lg download" onClick={this.startDownload.bind(this, urlData)}>
-									<span className="glyphicon glyphicon-download"></span> Download
+								<img className="arrowIcons" src={arrowDownload}/> Download
 								</button>
 							</div>
 						</div>
@@ -212,9 +320,10 @@ class Download extends React.Component {
 function mapStateToProps(state) {
 	//console.log('original - state here is: ' + JSON.stringify(state))
 	return {
-		extData : state.extensionData.extensions,
 		page : state.extensionData.page,
 		urlData : state.extensionData.data,
+		mediaGroups: state.extensionData.mediaGroups,
+		banner: state.extensionData.banner,
 		statusData: state.downloadStatusData
 	}
 }

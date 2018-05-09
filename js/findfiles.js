@@ -1,25 +1,18 @@
-
-document.body.style.border = "5px solid red";
-
 var allLinks = document.querySelectorAll("a");
 var links = [];
 for (let link of allLinks) {
 	links.push(link.href);
 }
 
-// Get video links
-/*
-var videoLinks = document.querySelectorAll("video");
-for (let video of videoLinks) {
-	for (let source of video.getElementsByTagName('source'))
-		links.push(source.src);
-}
-*/
-document.querySelectorAll("[src]").forEach( element => links.push(element.src) );
+document.querySelectorAll("[src]").forEach( 
+    element => {
+        links.push(element.src) 
+    }
+);
 
 Array.prototype.unique = function(mutate) {
     var unique = this.reduce(function(accum, current) {
-        if (accum.indexOf(current) < 0) {
+        if (current != null && current && accum.indexOf(current) < 0) {
             accum.push(current);
         }
         return accum;

@@ -4,6 +4,7 @@ html, body {
   
   .page-choice {
 	width: 100%;
+	height: 100%;
 	padding: 4px;
 	font-size: 1.5em;
 	text-align: center;

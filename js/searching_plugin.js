@@ -14,7 +14,7 @@ function handleCheck() {
 function searchInTable() {
     var text = $(this).val().toLowerCase().trim();
     var table = $(this).closest("table");
-    removeTextHighlighting($("table tr span"));
+    removeTextHighlighting($("#highlight"));
     var isShowOnlyCheckedItems = $("#ShowChecked").prop('checked');
     console.log('In searchInTable')
 
@@ -24,7 +24,7 @@ function searchInTable() {
         var firstCol = table.find('thead > tr:eq(1) > th:first').data('sort');
         var $tdElement = $row.find("td");
         if (firstCol === 'index') {
-            $tdElement = $row.find("td").slice(1);
+            $tdElement = $row.find("td").slice(3);
         }
         var rowText = $tdElement.text().toLowerCase().trim();
         var $inputElement = $row.find("input");
@@ -62,7 +62,7 @@ function removeTextHighlighting(element) {
 }
 
 function addTextHighlighting(columns, text) {
-    var highlightedText = '<span class="findElement">' + text + '</span>';
+    var highlightedText = '<span id="highlight" class="findElement">' + text + '</span>';
     columns.each(function() {
         if ($(this).text().length !==0 ) {
             var newText = $(this).text().replace(text, highlightedText);

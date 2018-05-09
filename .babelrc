@@ -1,9 +1,8 @@
 {
-	"env": {
-			"test": {
-					"presets": ["es2015", "jest", "stage-0"]
-			}
-	},
-	"presets": ["react", "es2015"],
-	"plugins": ["transform-object-rest-spread"]
+	"presets": ["@babel/preset-react"],
+	"plugins": ["transform-react-jsx", "transform-object-rest-spread"],
+	"ignore": [
+	  "foo.js",
+	  "bar/**/*.js"
+	]
 }
