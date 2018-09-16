@@ -1,10 +1,5 @@
-import musicIcon from '../icons/music.svg';
-import videoIcon from '../icons/video.svg';
-import pictureIcon from '../icons/picture.svg';
-import textIcon from '../icons/text.svg';
-import compressedIcon from '../icons/compressed.svg';
-import otherIcon from '../icons/others.svg';
 import {g_diskStore} from '../PluginStore.jsx'
+import _ from 'lodash';
 
 /**
  * 
@@ -18,92 +13,69 @@ function buildMessage(msgType, message, dismiss) {
 
 function fileExtensionReducer(currentState, action) {
 	let { type : actionType, payload } = action;
+
+	/*
 	const __OTHERS__ = 'Others'
 	const _OTHER_MEDIA_GROUP_ = { name: __OTHERS__, extensions: g_diskStore.getDefaultExtensions().toString(), iconClass: otherIcon};
+	*/
 
-	console.log('FileExtensionReducer: currentState: ' + JSON.stringify(currentState) + ', action: ' + JSON.stringify(action))
+	// console.log('FileExtensionReducer: currentState: ' + JSON.stringify(currentState) + ', action: ' + JSON.stringify(action))
 
 	if (actionType === 'SHOW_BANNER_ACTION') {
 		var banner = buildMessage(payload.level, payload.message, false);
 		return {...currentState, banner};
+	} 
+	else if (actionType == 'QUERY_PARAM_ACTION') {
+		var state = initialState();
+
+		return { page: currentState.page, data: state.data, mediaGroups: state.mediaGroups };
+	}
+	else if (actionType === 'MEDIA_DOWNLOAD_PROPS_CHANGE') {
+		var updateMediaGroups = [...currentState.mediaGroups];
+		let targetMedia = _.find(updateMediaGroups, { mediaName : payload.media.mediaType } )
+		targetMedia.downloadDir = payload.media.downloadDir;
+
+		console.log('----> REDUCER. MEDIA_DOWNLOAD_PROPS_CHANGE, SENDING: ' + JSON.stringify(updateMediaGroups))
+
+		return { page: currentState.page, data: currentState.data, mediaGroups: updateMediaGroups };
+	}
+	else if (actionType === 'DEL_EXTENSION') {
+		console.log("Got del extension call in reducer for " + JSON.stringify(payload));
+
+		var updateMediaGroups = [...currentState.mediaGroups];
+		let targetMedia = _.find(updateMediaGroups, { mediaName : payload.media.mediaType } )
+		_.remove(targetMedia.extensions, (ext) => ext.name===payload.delExt )
+
+		console.log("after removing target media is " + JSON.stringify(targetMedia))
+
+		return { page: currentState.page, data: currentState.data, mediaGroups: updateMediaGroups }
 	}
 	else if (actionType === 'ADD_EXTENSION') {
-		if (!payload || payload.length==0) {
-			console.log('returning current stat')
-			return currentState;
-		}
-		payload =payload.toUpperCase();
-		console.log("Got a request to add a new extension: " + JSON.stringify(payload));
-		var newMediaGroups = [...currentState.mediaGroups];
-		let exists=false
-		let targetMedia;
-		let mediaIndex = 0, index = 0;
-		let errorMsg;
-		for (let media of newMediaGroups) {
-			media.extensions.forEach(
-				extn => { 
-					if (extn.name===payload) { 
-						errorMsg = "<B>" +  extn.name + "</B> already exists in Media type <B>" + media.mediaName + "</B>";
-						console.log(extn.name + " already exists in " + media.mediaName)
-						exists=true; 
-					}
-				});
-			if (exists) {
-				var banner = buildMessage('warning', errorMsg, true);
-				return {...currentState, banner};
-			}
-			if (media.mediaName === __OTHERS__) {
-				console.log("match");
-				targetMedia = media;
-				mediaIndex = index;
-			}
-			console.log("not match")
-			index++;
-		}
-		if (!targetMedia) {
-			targetMedia = _OTHER_MEDIA_GROUP_;
-			targetMedia.mediaName = __OTHERS__;
-			targetMedia.extensions = [];
-			mediaIndex = newMediaGroups.push(targetMedia)-1;
-			targetMedia.mediaId = mediaIndex;
-		}
 
-		// Add the files matching extension in UrlData
-		var newDataArr = [...currentState.data];
+		console.log("Got add extension call in reducer for " + JSON.stringify(payload));
+
+		// Got add extension call in reducer for {"media":{"mediaType":"Images","icon":"pictureIcon",
+		// "extensions":["JPEG","JPG","PNG","GIF"],"userExtensions":["CMS"]},"newExt":"CMS"}
+
+		var updateMediaGroups = [...currentState.mediaGroups];
+		let targetMedia = _.find(updateMediaGroups, { mediaName : payload.media.mediaType } )
+		//console.log("Found target media: " + JSON.stringify(targetMedia))
+
+		// {"mediaName":"Images","extensions":[{"name":"JPG","isSelected":false,"mediaId":2,"count":1}],"iconClass":"icons/picture.svg","mediaId":2}
+
+		// Find how may urls match this extension.
 		let count=0;
-		index = newDataArr.length;
-		g_allUrls.forEach( url => {
-			if (url.toLowerCase().endsWith(payload.toLowerCase())) {
-				newDataArr.push({
-					index: index++,
-					extName: payload,
-					mediaId: mediaIndex,
-					url: url,
-					download: true
-				});
-				count++;
-			} 
-		});
+		let newExt=payload.newExt.toLowerCase();
+		g_allUrls.forEach( linkObj => isUrlMatches(linkObj.url, newExt) ? count++ : count )
 
-		// Add the extension in the media group
-		targetMedia.extensions.push({name: payload, isSelected: true, mediaId: mediaIndex, count: count});
+		//console.log('Number of extensions matching: ' + count);
+
+		// Add this to targetMedia extensions.
+		targetMedia.extensions.push(buildExtensionInfo(payload.newExt, targetMedia.mediaId, count))
+
+		return { page: currentState.page, data: currentState.data, mediaGroups: updateMediaGroups }
 
 		
-
-		for (let newMedia of newMediaGroups) {
-			if (newMedia.mediaName === targetMedia.mediaName) {
-				newMedia.extensions.map(e => {
-					for (let newData of newDataArr) {
-						if (newData.mediaId === e.mediaId)
-							newData.download = e.isSelected;
-					}
-				})
-			}
-		}
-
-		g_diskStore.addUserExtension(payload);
-
-		return { page: currentState.page, data: newDataArr, mediaGroups: newMediaGroups}
 	} else if (actionType === 'MEDIA_SELECTION') {
 		var clickedMedia = payload;
 		var newMediaGroups = [...currentState.mediaGroups];
@@ -139,7 +111,7 @@ function fileExtensionReducer(currentState, action) {
 					for (let newData of newDataArr) {
 						console.log("To compare " + newData.extName + " with " + ext.name);
 						if (newData.extName === ext.name) {
-							console.log("HERE: selected? " + ext.isSelected + ", mediaID: " + ext.mediaId + ", url " + newData.url)
+							console.log("HERE: selected? " + ext.isSelected + ", mediaID: " + ext.mediaId + ", url " + newData.linkObj.url)
 							newData.download = ext.isSelected; // Check mark for url
 						}
 					}
@@ -150,10 +122,39 @@ function fileExtensionReducer(currentState, action) {
 		var model = { page: currentState.page, data: newDataArr, mediaGroups: newMediaGroups}
 		console.log("After extn click handling in reducer, to return " + JSON.stringify(model));
 		return model;
-	} else if (actionType === 'NAV_FILTER_FILES') {
-		console.log("Model update - NAV_FILTER_FILES - Setting page: " + payload);
-		var newModel = {page: payload, data: currentState.data, mediaGroups: currentState.mediaGroups}
-		console.log("TO RETURN: " + JSON.stringify(newModel));
+	} else if (actionType === 'DIALOG_NAVIGATE') {
+		console.log("Model update - " + actionType + " - Setting page: " + JSON.stringify(payload));
+		var returnUrlData;
+
+		if (payload.to=='page1') {
+			returnUrlData = buildUrlData(currentState.mediaGroups).filter( (urlData, index) => {
+				return urlData.download;
+			});
+		} else if (payload.to=='page0') {
+			returnUrlData = buildUrlData(currentState.mediaGroups);
+		} else if (payload.to=='page3') { // Preferences
+			returnUrlData = currentState.data;
+		} else { // Start Download
+			returnUrlData = currentState.data;
+		}
+
+		var newModel = {page: payload, data: returnUrlData, mediaGroups: currentState.mediaGroups}
+		// console.log("TO RETURN: " + JSON.stringify(newModel));
+		return newModel;
+	} else if (actionType === 'SHOW_CHECKED_ITEMS') {
+		console.log("SHOW_CHECKED_ITEMS: building updated model " + actionType)
+
+		// If show checked is on, then display URL according to download status. 
+		// Else if show checked is off, then display URL.
+
+		//var isShowChecked = $("#ShowChecked").prop('checked')
+		// Without the rebuilding of URL, the above check action does not work properly
+		// The visibility of the URL data is controlled by the SearchingPlugin. Refer handleCheck in SearchingPlugin
+		var filteredData = buildUrlData(currentState.mediaGroups).filter((urlData, index) => {
+			return urlData.download;
+		});
+		var newModel = {page: currentState.page, data: filteredData, mediaGroups: currentState.mediaGroups}
+
 		return newModel;
 	} else if (actionType === 'TOGGLE_ACTION') {
 		console.log("Model update - TOGGLE_ACTION: " + payload);
@@ -170,29 +171,38 @@ function fileExtensionReducer(currentState, action) {
 				return {...incomingUrlData, download: !incomingUrlData.download};
 			}
 		});
-		var updatedMediaGroups = updateMediaSelection([...currentState.mediaGroups], updatedData);
-		var newModel = {page: currentState.page, data: updatedData, mediaGroups: updatedMediaGroups}
+
+		// If show checked is on, then display URL according to download status. 
+		// Else if show checked is off, then display URL.
+		/*
+		var isShowChecked = $("#ShowChecked").prop('checked')
+		var filteredData = updatedData.filter((urlData, index) => {
+			return (isShowChecked) ? urlData.download : true;
+		});
+		var updatedMediaGroups = updateMediaSelection([...currentState.mediaGroups], filteredData);
+		*/
+		//var newModel = {page: currentState.page, data: updatedData, mediaGroups: updatedMediaGroups}
+
+		var newModel = {page: currentState.page, data: updatedData, mediaGroups: currentState.mediaGroups}
 		return newModel;
 	} else if (actionType === 'DEFINED_DOWNLOAD') {
-		var newModel = {extensions: [...currentState.extensions], page: 'page2', data: [...currentState.data], mediaGroups: [...currentState.mediaGroups]}
+		var newModel = {extensions: [...currentState.extensions], page: {'to' : 'page2'}, data: [...currentState.data], mediaGroups: [...currentState.mediaGroups]}
 		return newModel;
 	} else if (actionType === 'ITEM_CREATED' || actionType === 'ITEM_CHANGED') {
 		console.log("File Extension Reducer - Passing off the original model for this actionType");
 		return currentState;
 	}
 
-	var mediaGroupDefinition = [
-		{ name: 'Audio',            extensions: 'MP3,WAV,OGG,WMA,AIF,CDA,MID', iconClass: musicIcon },
-		{ name: 'Video',            extensions: 'MP4,AVI,FLV,MOV,WMV', iconClass: videoIcon},
-		{ name: 'Images',           extensions: 'JPEG,JPG,PNG,GIF', iconClass: pictureIcon},
-		{ name: 'Text',             extensions: 'PDF,TXT,DOC,DOCX,RTF,ODT,TEX,WPD,CSV,DAT,JSON,LOG,SQL,XML,DTD', iconClass: textIcon},
-		{ name: 'Compressed Files', extensions: '7Z,ARJ,DEB,PKG,RAR,RPM,TAR.GZ,Z,ZIP,TAR', iconClass: compressedIcon},
-		_OTHER_MEDIA_GROUP_
-	];
+	var state = initialState();
+	var startPage = {'to' : 'page0'};
 
+	return { page: startPage, data: state.data, mediaGroups: state.mediaGroups };
+}
 
+function initialState() {
+	//g_diskStore.init();
+	var mediaGroupDefinition = g_diskStore.getMediaGroups();
 	var defMediaGroups = buildMediaGroups(mediaGroupDefinition);
-
 	var defUrlData = buildUrlData(defMediaGroups);
 
 	// Use extensions that are present in the WEB page.
@@ -204,9 +214,18 @@ function fileExtensionReducer(currentState, action) {
 	);
 
 	console.log('INITIAL MEDIA GROUPS: ' + JSON.stringify(defMediaGroups));
+	return {data: defUrlData, mediaGroups : defMediaGroups}
+}
 
-	var model = { page: 'page0', data: defUrlData, mediaGroups: defMediaGroups}
-	return model;
+function isUrlMatches(url, ext) {
+	if (true /*g_diskStore.isIgnoreQueryParams()*/) {
+		url = url.split(/[?#]/)[0]
+	}
+	return url.toLowerCase().endsWith(ext)
+}
+
+function buildExtensionInfo(extName, mediaId, count) {
+	return {name: extName, isSelected: false, mediaId: mediaId, count: count};
 }
 
 /**
@@ -218,12 +237,13 @@ function buildMediaGroups(mediaGroupDef) {
 
 	for (let media of mediaGroupDef) {
 		var extArray = [];
-		var mediaInfo = { mediaName: media.name, extensions: extArray, iconClass: media.iconClass }
+		var mediaInfo = { mediaName: media.name, extensions: extArray, iconClass: media.iconClass, downloadDir: media.downloadDir }
 		var mediaId = mediaGroupArray.push(mediaInfo) - 1;
 		mediaInfo.mediaId = mediaId;
-		media.extensions.split(',').map(extName => {
+		var combinedExtensions = media.extensions.concat(media.userExtensions)
+		combinedExtensions.forEach(extName => {
 				if (extName)
-					extArray.push( {name: extName, isSelected: false, mediaId: mediaId, count: 0})
+					extArray.push(buildExtensionInfo(extName, mediaId, 0))
 			}
 		)
 	}
@@ -235,6 +255,10 @@ function buildUrlData(mediaGroups) {
 	var index = 0;
 	var urlData = [];
 	var extLookup = [];
+
+	var me = buildTimeMarker('buildUrlData');
+	console.time(me);
+
 	for (let media of mediaGroups) {
 		for (let ext of media.extensions) {
 			extLookup["." + ext.name.toLowerCase()] = ext;
@@ -242,18 +266,19 @@ function buildUrlData(mediaGroups) {
 		}
 	}
 
-	g_allUrls.forEach( url => {
+	g_allUrls.forEach( linkObj => {
 
 		for (var extName in extLookup) {
 			//console.log(url + ' => Testing with Extension => ' + extName );
-			if (url.toLowerCase().endsWith(extName)) {
+			if (isUrlMatches(linkObj.url, extName)) {
 				//console.log('matched ' + extName );
 				urlData.push({
 					index: index++,
 					extName: extLookup[extName].name,
 					mediaId: extLookup[extName].mediaId,
-					url: url,
-					download: false
+					linkObj: linkObj,
+					isBrokenLink: false,
+					download: extLookup[extName].isSelected
 				})
 				extLookup[extName].count += 1;
 				break;
@@ -261,7 +286,10 @@ function buildUrlData(mediaGroups) {
 		};
 		
 	});
-	console.log("Built urlData:" + JSON.stringify(urlData));
+
+	console.timeEnd(me);
+
+	// console.log("Built urlData:" + JSON.stringify(urlData));
 	return urlData;
 }
 

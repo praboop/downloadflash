@@ -1,5 +1,7 @@
 html, body {
-	width: auto;
+	width: 800px;
+	height: auto;
+	overflow-x: hidden;
   }
   
   .page-choice {

@@ -1,0 +1,44 @@
+html, body {
+	width: 800px;
+	height: 500px;
+	overflow-x: hidden;
+  }
+
+.data {
+	height: 80px;
+	width:370px;
+	border:1px solid green;
+  }
+  
+  table ,tr td{
+	  border:1px solid red
+  }
+  tbody {
+	  display:block;
+	  height:110px;
+	  overflow:auto;
+  }
+  thead, tbody tr {
+	  display:table;
+  }
+  
+  
+  thead {
+	  width: calc( 100% - 1em )
+  }
+  
+  table {
+	  width:400px;
+  }
+  
+  .col1 {
+	width:30px
+  }
+  
+  .col2 {
+	width:370px
+  }
+  
+  .h2 {
+	height: 0px
+  }

@@ -4,13 +4,21 @@
 
 			document.addEventListener("DOMContentLoaded", function() {
 				var cont = document.getElementById("container");
-				var imgNames = ['nature 1.jpg', 'nature two.jpg', 'naturethree.jpg', 'nature 5 five.jpg', 'nature6.jpg'];
+				cont.style.listStyleType = 'none';
+				var imgNames = ['nature 1.jpg', 'nature two.jpg', 'naturethree.jpg', 
+					'nature 5 five.jpg', 'nature6.jpg',
+					'Alau_Island_Sunrise_Maui_Hawaii_1024.jpg',
+					'An_Autumn_Beauty_1024.jpg', 'autumn-png-leaves.png'];
 				for (var i in imgNames) {
 					var li = document.createElement('li');
 					var img = document.createElement('img');
 					img.src = 'images/' + imgNames[i];
+					img.style.width = '120px'
+					if (i==1) {
+						img.title = 'Image Title One'
+					}
 					li.appendChild(img);
-					cont.appendChild(img);
+					cont.appendChild(li);
 				}
 			});
 		</script>
@@ -18,9 +26,7 @@
 	<body>
 		<ul id="container">
 
-			<li>
-			
-			</li>
+
 		</ul>
 	</body>
 </html>

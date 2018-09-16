@@ -3,82 +3,148 @@ import './app.css';
 
 import {g_diskStore} from './PluginStore.jsx'
 
+import PrefTabs from './PrefTabs.jsx'
+import Banner from './Banner.jsx';
+import sidebarToggle from './icons/sidebarIcon.svg';
+
 class Preferences extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.addUserExtensions = this.addUserExtensions.bind(this);
-		this.clearUserExtension = this.clearUserExtension.bind(this);
-		this.save = this.save.bind(this);
-		this.state = { extensions: [] }
-		g_diskStore.getUserExtensions(this.addUserExtensions);
-		g_diskStore.register(()=> {
-			console.log("Updating preferences")
-			g_diskStore.getUserExtensions(this.addUserExtensions)}
-		);
+
+		this.compname = buildTimeMarker('Preferences');
+		console.time(this.compname);
+
+		this.state = { preferences: {}, inited : true }
+		this.updatePreferences = this.updatePreferences.bind(this);
+		g_diskStore.getPreferences(this.updatePreferences);
+		g_diskStore.register((opResult)=> {
+			//console.log("Loading preferences from disk store. status of operation " + opResult.error);
+			//g_diskStore.getPreferences(this.updatePreferences);
+			if (!opResult.error) {
+				this.updatePreferences(opResult);
+			} else {
+				this.showBanner('warning', opResult.error);
+			}
+		});
 	}
 
-	addUserExtensions(ext) {
-		this.setState({ extensions: ext });
+	componentDidMount() {
+		console.timeEnd(this.compname);
 	}
 
-	clearUserExtension(ext) {
-		console.log('To remove this extension ' + ext);
-		var filtered = this.state.extensions.filter(item => {if (item!=ext)  return item;});
-		this.setState({extensions: filtered});
+	componentDidUpdate() {
+		// This needs to be done for the tooltips to work
+		// console.log("Preference: componentDidUpdate")
+		$('[data-toggle="tooltip"]').tooltip()
 	}
 
-	save() {
-		console.log('saving changes');
-		g_diskStore.saveUserExtensions(this.state.extensions);
-		$(function () {
-			$('#exampleModal').modal('toggle');
-		 });
+	updatePreferences(opResult) {
+		//console.log("Preferences . Updating to " + JSON.stringify(opResult.preferences))
+		this.setState({preferences: opResult.preferences, inited : true });
+		//console.log("Invoking Reducer Actions due to " + opResult.update.action)
+		if (opResult.update.action === 'ADD_EXTENSION') {
+			this.props.addAction(opResult.update.model);
+		} else if (opResult.update.action === 'DEL_EXTENSION') {
+			this.props.delAction(opResult.update.model);
+		} else if (opResult.update.action === 'QUERY_PARAM_ACTION') {
+			this.props.prefIgnoreQueryAction();
+		} else if (opResult.update.action === 'MEDIA_UPDATE') {
+			this.props.updateMediaAction(opResult.update.model);
+		} else if (opResult.update.action === 'MEDIA_DOWNLOAD_PROPS_CHANGE') {
+			this.props.mediaDownloadChangeAction(opResult.update.model);
+		}
+	}
+
+	onCloseClick() {
+		console.log("Go to source page: " + this.props.from)
+		var navInfo = {'to' : this.props.from}
+
+		this.props.navigateAction(navInfo);
+		//this.showBanner('warning', 'hoya');
+	}
+
+
+	showBanner(msgType, message) {
+
+		console.log("To display banner with message " + message);
+		var bannerProp={style: msgType, message: message, dismiss: false, visible: true};
+		var newState = {...this.state};
+		newState.banner = bannerProp;
+		this.setState(newState);
+	}
+
+	onNavToggleClick(e) {
+		e.preventDefault();
+		$("#wrapper").toggleClass("toggled");
+		$("#sidebarComp").toggleClass("sidebarToggleRotate");
 	}
 
 	render() {
-		
-		let choosenExtensions = [];
-		let eIndex = 0;
-		this.state.extensions.map(extn => { 
-			choosenExtensions.push(
-				<span key={eIndex} className="item">
-					<button onClick={this.clearUserExtension.bind(this, extn)} type="button">x</button>
-					{extn}
-				</span>
+		try {
+			console.time(this.compname + ".render");
+			return this._render();
+		} finally {
+			console.timeEnd(this.compname + ".render");
+		}
+	}
+
+	_render() {
+
+		if (this.props.page.to !== 'page3') {
+			console.log(this.props.page.to + ": Skip Rendering Preferences....");
+			return (
+				<li className={this.props.visibility}>
+				</li>
 			)
-			eIndex++;})
+		}
 
-		var prefExtensions = (
-			<div>
-				<h5> User Extensions </h5>
-				{choosenExtensions}
-			</div>
-		);
+		console.log("Rendering Preferences...");
+						
+		if (this.state.banner) {
+			//console.log ("Creating banner model since it is present." + this.state.banner)
+			this.bannerModel=this.state.banner;
+		} else {
+			//console.log("Not creating banner since message is not present.")
+			this.bannerModel={visible:false}
+		}
 
+		var sideBarHelp="Show or hide sidebar"
+
+		var sideBarButton = (<button type="button"
+								id="sidebarComp" 
+								className="btn btn-info menu-toggle sidebarToggle"
+								data-toggle="tooltip"
+								title={sideBarHelp}
+								onClick={this.onNavToggleClick.bind(this)}>
+								<img className="sidebarToggleIcon" src={sidebarToggle}/>
+						</button>);
 
 		return(
-			<div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div className="modal-dialog" role="document">
-					<div className="modal-content">
-						<div className="modal-header bg-primary">
-							<h5 className="modal-title text-white" id="exampleModalLabel">Preferences</h5>
-							<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div className="modal-body">
-							{prefExtensions}
-						</div>
-						<div className="modal-footer">
-							<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" className="btn btn-primary" onClick={this.save.bind()}>Save changes</button>
-						</div>
-					</div>
-				</div>
-			</div>
+
+
+<li className={this.props.visibility}>
+	<div className="card">
+
+		<div className="card-header bg-primary header">
+			<h4 className="card-title text-center text-white">{sideBarButton} Preferences</h4>
+		</div>
+
+		<Banner model={this.bannerModel}/>
+
+		<div className="modal-body">
+			<PrefTabs state={this.state} showBanner={this.showBanner.bind(this)}/>
+		</div>
+
+		<div className="col-sm-12 text-center full-width">
+			<button type="button" className="btn btn-secondary btn-lg download" onClick={this.onCloseClick.bind(this)}>Back</button>
+		</div>
+	</div>
+</li>	
+
 		);
 	}
 }
+
 
 export default Preferences;

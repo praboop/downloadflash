@@ -12,17 +12,22 @@ class Banner extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { visible: props.model.visible }
-		console.log("=== BANNER CONSTRUCTOR: " + JSON.stringify(props) + " model: " + JSON.stringify(this.state));
+		//console.log("=== BANNER CONSTRUCTOR: " + JSON.stringify(props) + " model: " + JSON.stringify(this.state));
+	}
+
+	componentWillReceiveProps(nextProps) {
+		this.setState(nextProps.model);  
+		//console.log("Banner got update. Props: " + JSON.stringify(nextProps))
 	}
 
 	closeAlert() {
-		console.log("BANNER: Alert will be hidden");
+		//console.log("BANNER: Alert will be hidden");
 		this.props.model.visible = false;
 		this.setState(this.props.model);
 	}
 	
 	render() {
-		console.log("--> render banner props is : " + JSON.stringify(this.props));
+		//console.log("--> render banner props is : " + JSON.stringify(this.props));
 		if (this.props.model.visible) {
 			var model = this.props.model;
 			this.className = "alert alert-" + model.style;
@@ -39,7 +44,7 @@ class Banner extends React.Component {
 					this.props.model.visible ?
 						<div id='alertBox'>
 							<div className={this.className} role="alert">
-								<button type="button" className="close" onClick={this.closeAlert} data-dismiss="alert" aria-label="Close">
+								<button type="button" className="close" onClick={this.closeAlert} aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 								</button>
 								<div dangerouslySetInnerHTML={{

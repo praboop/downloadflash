@@ -2,6 +2,21 @@
 	border: 0;
 }
 
+.EasyTableSearch { 
+	table-layout: fixed; 
+}
+
+.FixedLayoutTable {
+	table-layout: fixed;
+}
+
+/* Breaks dropdown in custom extensions
+table th, table td {
+	 overflow: hidden; 
+	 word-wrap: break-word;
+}
+*/
+
 /*
  Page Width
 */
@@ -23,6 +38,13 @@ li {
 	margin-bottom:10px;
 }
 
+.paypalImage {
+	width: 120px;
+	height: auto;
+	border-radius:10px !important;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
 .customBtn {
 	text-align: left;
 	width: 180px;
@@ -31,15 +53,27 @@ li {
 	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
 }
 
-.toggleBtn {
-	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+
+.tabbedBtn {
+	width: 180px;
+	margin:10px;
+	margin-right:0px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);	
+	padding: 5px;
 }
+
+.roundedBtn {
+	border-radius:10px !important;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	margin-bottom:10px;
+	margin-top:15px;
+	margin-left:15px;
+}
+
 
 .markBtn {
 	height: 31px;
-	width: 80px;
-
-	padding: 0;
+	padding: 6px;
 	border: 0;
 }
 
@@ -53,7 +87,11 @@ li {
 	border: 5px dotted pink;
 }
 
-.download:active, .customBtn:active , .toggleBtn:active, .btn-group-vertical > button:active {
+.paypalImage:active {
+	transform: translateY(3px);
+}
+
+.download:active, .customBtn:active , .toggleBtn:active, .roundedBtn:active, .btn-group-vertical > button:active {
 	transform: translateY(3px);
 }
 
@@ -93,7 +131,11 @@ li {
 	}
 
 	.full-width {
-		width: 100%
+		width: 799px;
+	}
+
+	.full-height {
+		height: 599px;
 	}
 
 	.hidden {
@@ -107,11 +149,6 @@ li {
 	.nav > li {
 		position: inherit;
 	}
-
-	.big-checkbox {
-
-	}
-
 
 	.btnHeight {
 		height: 31px;
@@ -128,6 +165,13 @@ li {
 
 	  .spanA1 {
 		margin-left: 3px;
+	  }
+
+	  .dl-tag {
+		  white-space: nowrap;
+		  color: #fff;
+		  width:12ch;
+		  padding: 8px;
 	  }
 
 	  .dl-badge-info {
@@ -155,7 +199,6 @@ li {
 	  }
 
 	  .toggleClass {
-		font-size: 1.4rem;
 		font-weight: bold;
 	  }
 
@@ -164,7 +207,7 @@ li {
 		  padding-bottom: 0px;
 	  }
 
-	  .table thead th {
+	.table thead th {
 		vertical-align: middle;	
 	}
 
@@ -175,21 +218,94 @@ li {
 		user-select: all;          /* Likely future */   
 	  }
 
-	  .settings {
+
+
+
+	  .sidebarToggle,
+	  .settings
+	  {
 		width: 25px;
 		height: 25px;
-		float: right;
-		border-radius:10px !important;
-		box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+
+		  font-weight:bold;
+		  font-size:15px;
+		  border:none;
+		  cursor:pointer;
+	  
+		  -webkit-transition:-webkit-transform 1s,opacity 1s,background 1s,width 1s,height 1s,font-size 1s;
+		  transition: transform 1s,opacity 1s,background 1s,width 1s,height 1s,font-size 1s;
+	  
+		  -o-transition-property:width,height,-o-transform,background,font-size,opacity,color;
+		  -o-transition-duration:1s,1s,1s,1s,1s,1s,1s;
+	  
+		  -moz-transition-property:width, height, -moz-transform, background, font-size, opacity, color;
+		  -moz-transition-duration:1s,1s,1s,1s,1s,1s,1s;
+	  
+		  transition-property:width,height,transform,background,font-size,opacity;
+		  transition-duration:1s,1s,1s,1s,1s,1s;
+	  
+		  -webkit-border-radius:5px;
+		  /*
+		  border-radius:5px;
+	  
+		  box-shadow:0 0 2px rgba(0,0,0,0.5); */
+
+border-radius:10px !important;
+box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	  
+		  text-shadow:0 0 5px rgba(255,255,255,0.5);
+	  
+		  display:inline-block;    /* It is important for the button to rotate*/
+	  }
+	  
+	  .sidebarToggleRotate
+	  {
+		-moz-transform: rotate(180deg);
+		-webkit-transform: rotate(180deg);
+		-o-transform: rotate(180deg);
+		transform: rotate(180deg);
 	  }
 
-	  .settingsIcon {
+	  .settings:hover
+	  {
+		 -webkit-animation: rotation 2s infinite linear;
+		 animation: rotation 2s infinite linear;
+		  background:#99A411;
+		  font-size:30px;
+		  color:#fff;
+	  }
+
+	  .settings {
+		float: right;
+	  }
+
+	  @keyframes rotation {
+		from {
+				-webkit-transform: rotate(0deg);
+		}
+		to {
+				-webkit-transform: rotate(359deg);
+		}
+     }
+
+	  .sidebarToggle {
+		float: left;
+	  }
+
+	  .sidebarToggleIcon,
+	  .settingsIcon 
+	  {
 		position: absolute;
 		margin-left: -10px;
 		margin-top: -10px;
 		width: 20px;
 		height: 20px;
 	  }
+
+
+
+
+
 
       .modal-open {
 		padding-right: 0 !important;
@@ -203,3 +319,161 @@ li {
 	.header {
 		display: inline-block; 
 	}
+
+	.input-group-addon {
+		margin-left: 10px;
+	}
+
+/** To remove horizontal scroll bar in preferences for media items. doesn't work
+
+
+
+.cc3 {
+	display: block;
+	overflow-y: scroll;
+}
+
+*/
+
+/*
+.imgPreview {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 75px;
+}
+*/
+
+.imgPreview {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 75px;
+}
+
+.classFilterTbody {
+	display: block;
+	height: 250px;
+	overflow: auto;
+}
+
+.displayTable {
+	display: table;
+}
+
+/*
+.classFilterThead, .classFilterTbody tr {
+	display: table;
+}
+*/
+
+.classFilterTbody tr {
+	display: flex;
+}
+
+
+.classFilterThead {
+	width: calc( 100% - 1em )
+}
+
+img:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+.imgPopContainer {
+	float:left;
+	margin: 0 auto;
+}
+
+.imgPop {
+	display: block;
+	max-height: 360px;
+	max-width: 640px;
+	width: auto;
+	height: auto;
+}
+
+.imgPopDialog{
+	max-width: 670px;
+	max-height: 510px;
+}
+
+.imgModelContent {
+	width: 670px;
+	height: 510px;
+}
+
+.nav {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	align-content: space-between;
+	padding: 0rem;
+}
+
+.prev {
+	display:flex;
+	justify-content: center;
+	left: 1em;
+}
+
+.next {
+	display:flex;
+	justify-content: center;
+	right: 1em;
+}
+
+.dlRow {
+	margin-left:-10px;
+	margin-right:-10px;
+}
+
+.tooltip-inner {
+	max-width: 60%;
+	margin-left: auto;
+	margin-right: 40px;
+}
+
+.help-icon-dl{
+	position: absolute;
+    max-height: 18px;
+    top: 50%;
+    text-align: center;
+    transform: translateY(-50%);
+    right: 6px;
+}
+
+.help-icon-dl-simple {
+	max-height: 18px;
+	text-align: center;
+	left: 6px;
+	right: 6px;
+}
+
+.help-button-dl{
+	position: relative;
+}
+
+.help-text-dl
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.nav-horizontal {
+	justify-content: flex-start;
+	padding: 1rem;
+}
+
+.editable-table {
+    background-color: #FFFFFF;
+    text-align: right;
+    position: relative;
+}
+
+table.editable-table tr:nth-child(odd):hover {
+    box-shadow: 0px -2px 2px 1px rgba(0, 0, 0, 0.5) inset;
+}
+
+
+

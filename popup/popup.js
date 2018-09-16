@@ -3,11 +3,10 @@ $(document).ready(function () {
 
     console.log("in updated ready........");
 
-
 	function onExecuted(result) {
 		try {
             g_allUrls = result[0];
-            console.log("========> " + g_allUrls.length + " URLS DETECTED: " + JSON.stringify(g_allUrls));
+            //console.log("========> " + g_allUrls.length + " URLS DETECTED: " + JSON.stringify(g_allUrls));
             window.extension.downloadlinks.showPopup();
 			//download(result.toString().split(","));
 		} catch (error) {
@@ -26,7 +25,7 @@ $(document).ready(function () {
         g_status = statusCallback;
     }
 
-	window.extension.downloadlinks.download = function(files) {
+	window.extension.downloadlinks.download = function(files , mediaArray, isSaveAsPromptDisabled) {
 
         function onStartedDownload(itemId) {
             console.log(`Started downloading: ${itemId}`);
@@ -72,17 +71,38 @@ $(document).ready(function () {
 
 		for (index in files) {
 			try {
-                var decodedUrl = decodeURIComponent(files[index]);
-                var fileName = decodedUrl.substring(decodedUrl.lastIndexOf('/')+1);
+                var decodedUrl = decodeURIComponent(files[index].linkObj.url);
+
+                var mediaId = files[index].mediaId;
+                //console.log ('media id of downloaded item: ' + mediaId);
+
+                var targetMedia = mediaArray.find(media => media.mediaId == mediaId);
+
+                //console.log ('media file path: ' + targetMedia.downloadDir);
+                var saveLocAndName = "";
+
+                if (targetMedia.downloadDir === 'default') {
+                    var fileName = decodedUrl.substring(decodedUrl.lastIndexOf('/')+1);
+                    fileName = fileName.split('?')[0];
+                    saveLocAndName = fileName;
+                } else {
+                    saveLocAndName = files[index].downloadPath;
+                }
+
+                //console.log("saving to " + saveLocAndName);
+                
+                //console.log('Downloading file: >>' + decodedUrl + '<<');
+
 				var downloading = browser.downloads.download({
                     url: decodedUrl,
-                    filename: fileName
+                    filename: saveLocAndName,
+                    saveAs: !isSaveAsPromptDisabled /* true - allow the user to select a file name */
                 });
 
 				downloading.then(onStartedDownload, onFailed);
 
 			} catch (e) {
-				console.log("  ERROR: " + e.message);
+				console.error("ERROR during download", e);
 			}
 		}
 	} // End function download
@@ -98,13 +118,3 @@ $(document).ready(function () {
 
 
 var g_allUrls = [];
-
-/*
-// Link items
-var g_allUrls = ['http://www.default.com/default1.mp3',
-'http://www.default.com/default.mp4'
-];
-
-
-console.log("========> All URLS KNOWN: " + JSON.stringify(g_allUrls));
-*/
