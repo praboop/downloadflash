@@ -1,6 +1,6 @@
 {
   "name": "downloadlinks",
-  "version": "4.0",
+  "version": "4.0.0",
   "description": "Download files in a webpage",
   "main": "index.js",
   "directories": {

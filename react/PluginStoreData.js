@@ -208,4 +208,8 @@ const DEFAULT_STORE_DATA = Object.freeze({
 	  ]
 });
 
-module.exports = {DEFAULT_DATA: DEFAULT_STORE_DATA} 
+const INTERNAL_STORE_DATA = Object.freeze({
+	doNotShowWelcome : false
+});
+
+module.exports = {DEFAULT_DATA: DEFAULT_STORE_DATA, INTERNAL_DATA: INTERNAL_STORE_DATA} 

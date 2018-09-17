@@ -78,11 +78,23 @@ class Filter extends React.Component {
 		this.props.navigateAction({'from' : 'page1', 'to' : 'page0'});
 	}
 
-	toggleVisible(urlData) {
-		//var table = $(this).closest("table");
+	onMarkClick(urlData) {
+		//console.log('onMark -> before');
+		//console.table(urlData);
+
+		var newUrlData = [...urlData].map(item => {
+			//console.log('hit -> ' + JSON.stringify(item))
+			item.download = !item.download;
+			return item;
+		})
+
+		//console.log('onMark -> after');
+		//console.table(newUrlData);
+
+
+		/*
 		var table=$(".EasyTableSearch");
 		var rowIndex=0;
-		var newUrlData = [...urlData];
 		table.find('tbody > tr').each(function() {
 			var $row = $(this);
 			if ($row.is(":visible")) {
@@ -90,6 +102,7 @@ class Filter extends React.Component {
 			}
 			rowIndex++;
 		});
+		*/
 		this.toggleAction(newUrlData);
 	}
 
@@ -276,7 +289,7 @@ class Filter extends React.Component {
 		console.timeEnd(this.compname + ".resolveTags");
 
 		let toggleCheck = (
-			<button key='toggleCheck' type="button" className="btn btn-info markBtn toggleClass toggleCheck" onClick={this.toggleVisible.bind(this, urlData)}>
+			<button key='toggleCheck' type="button" className="btn btn-info markBtn toggleClass toggleCheck" onClick={this.onMarkClick.bind(this, urlData)}>
 			<span>Mark</span></button>
 		);
 
@@ -317,7 +330,7 @@ class Filter extends React.Component {
 			})
 			.map((urlDetail, index) => 
 				{
-				console.log("FILTER: PROCESSING ROW -> " + JSON.stringify(urlDetail));
+				//console.log("FILTER: PROCESSING ROW -> " + JSON.stringify(urlDetail));
 				var media = mediaGroups.filter(media => media.mediaId==urlDetail.mediaId)[0];
 				var imageContId;
 				// var decodedUrl = decodeURIComponent(urlDetail.url);
@@ -328,23 +341,25 @@ class Filter extends React.Component {
 
 				urlDetail.downloadPath = downloadPath // Set this reference for actual download;
 
-				//console.log(urlDetail.url + " BROKEN ? " + urlDetail.isBrokenLink)
+				//console.log(linkObj.url + " BROKEN ? " + urlDetail.isBrokenLink)
 
-				if (media.mediaName==='Images' && urlDetail.download && !(urlDetail.isBrokenLink)) {
+
+				if (media.mediaName==='Images' /*&& urlDetail.download && !(urlDetail.isBrokenLink)*/ ) {
 					imgNo+=1;
 					imageContId = 'span-img-'+imgNo
-					this.images[imgNo] = urlDetail.linkObj.url;
-				//	console.log("Filter.added to images : " + urlDetail.url)
+					this.images[imgNo] = linkObj.url;
+					//console.log("Filter.added to images imgNo: " + imgNo + " URL: " + linkObj.url)
 				}
 				//console.log("Filter.total images: " + this.images.length + " THEY ARE: " + JSON.stringify(this.images));
 
-				var preview = (isImgPreviewEnabled && media.mediaName==='Images' && !(urlDetail.isBrokenLink)) ? (
+				var preview = (isImgPreviewEnabled && media.mediaName==='Images' && urlDetail.download && !(urlDetail.isBrokenLink)) ? (
 					
 					<span id={imageContId} className={'label label-info DottedBox_content'}>
 					
-							<ImagePreview 
+							<ImagePreview
+							rowIndex={urlDetail.index}
 							id={imgNo} 
-							src={urlDetail.linkObj.url}
+							src={linkObj.url}
 							handleBrokenLink = {this.markBrokenLink}
 							images={this.images}/>
 
@@ -353,12 +368,15 @@ class Filter extends React.Component {
 				(<div><img className="mediaIcon" src={media.iconClass}/> <img className="mediaIcon" src={brokenLinkIcon}/></div>)
 				: (<img className="mediaIcon" src={media.iconClass}/>);
 
+				//console.log("Filter built preview " + imgNo + " " + linkObj.url);
+
 				var description = (this.state.description === this.showUrl) ? (
 					linkObj.url
 				) : (
 					downloadPath === 'default' ? 'Default download directory' : downloadPath
 				);
 
+				//console.log("FILTER -> checked for this row ? " + ((urlDetail.download) ? true : false));
 
 				return(
 
@@ -367,17 +385,16 @@ class Filter extends React.Component {
 					<td className='col-2'>
 						{preview}
 					</td>
-					<td className='col-1'>{
-					urlDetail.download ?
-					(
-						<input type="checkbox" defaultChecked='true' onClick={checkAction.bind(this, urlDetail)}/>
-					): urlDetail.isBrokenLink ?
-					(
-						<input type="checkbox"  disabled/>
-					) :
-					(
-						<input type="checkbox" onClick={checkAction.bind(this, urlDetail)}/>
-					)}</td>
+					<td className='col-1'>
+					{
+						urlDetail.isBrokenLink ? (
+							<input type="checkbox"  disabled/>
+						) : ( 
+							<input type="checkbox" checked={urlDetail.download} onChange={()=>{}}
+							onClick={checkAction.bind(this, urlDetail)}/> 
+						)
+				    }
+				    </td>
 					<td className="all-copy col-8">
 						{description}
 					</td>

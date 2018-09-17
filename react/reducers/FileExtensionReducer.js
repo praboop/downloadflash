@@ -93,7 +93,7 @@ function fileExtensionReducer(currentState, action) {
 			}
 		}
 		var model = { page: currentState.page, data: newDataArr, mediaGroups: newMediaGroups}
-		console.log("After media click handling in reducer, to return " + JSON.stringify(model));
+		//console.log("After media click handling in reducer, to return " + JSON.stringify(model));
 		return model;
 	}  else if (actionType === 'EXT_SELECTION') {
 		let extToToggle = payload,
@@ -150,15 +150,22 @@ function fileExtensionReducer(currentState, action) {
 		//var isShowChecked = $("#ShowChecked").prop('checked')
 		// Without the rebuilding of URL, the above check action does not work properly
 		// The visibility of the URL data is controlled by the SearchingPlugin. Refer handleCheck in SearchingPlugin
+		/*
 		var filteredData = buildUrlData(currentState.mediaGroups).filter((urlData, index) => {
 			return urlData.download;
 		});
+		*/
+
+		var filteredData = [...currentState.data];
+
 		var newModel = {page: currentState.page, data: filteredData, mediaGroups: currentState.mediaGroups}
 
 		return newModel;
 	} else if (actionType === 'TOGGLE_ACTION') {
-		console.log("Model update - TOGGLE_ACTION: " + payload);
+		//console.log("Model update - TOGGLE_ACTION: " + JSON.stringify(payload));
+
 		var updatedMediaGroups = updateMediaSelection([...currentState.mediaGroups], payload);
+
 		var newModel = {page: currentState.page, data: payload, mediaGroups: updatedMediaGroups}
 		return newModel;
 	} else if (actionType === 'SINGLE_CHECK_ACTION') {
@@ -167,7 +174,7 @@ function fileExtensionReducer(currentState, action) {
 			if (currentUrlData.index !== incomingUrlData.index)
 				return currentUrlData;
 			else {
-				console.log("Setting to " + !incomingUrlData.download + " for " + JSON.stringify(currentUrlData));
+				//console.log("Setting to " + !incomingUrlData.download + " for " + JSON.stringify(currentUrlData));
 				return {...incomingUrlData, download: !incomingUrlData.download};
 			}
 		});
@@ -179,9 +186,10 @@ function fileExtensionReducer(currentState, action) {
 		var filteredData = updatedData.filter((urlData, index) => {
 			return (isShowChecked) ? urlData.download : true;
 		});
-		var updatedMediaGroups = updateMediaSelection([...currentState.mediaGroups], filteredData);
 		*/
 		//var newModel = {page: currentState.page, data: updatedData, mediaGroups: updatedMediaGroups}
+
+		var updatedMediaGroups = updateMediaSelection([...currentState.mediaGroups], updatedData);
 
 		var newModel = {page: currentState.page, data: updatedData, mediaGroups: currentState.mediaGroups}
 		return newModel;

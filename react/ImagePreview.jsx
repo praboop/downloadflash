@@ -15,28 +15,49 @@ class ImagePreview extends React.Component {
 		this.modalId =  'imageModal-'+this.props.id;
 		this.popup = this.popup.bind(this);
 		this.imgLoaded = false;
-		console.log("IP images" + this.state.images.length + ' src: ' + this.props.src + ' id ' + this.props.id)
+		//console.log("ImagePreview constructor -> " + this.state.images.length + ' src: ' + this.props.src + ' id ' + this.props.id)
 	}
 
 	componentDidMount() {
-		console.log('ImagePreview -> componentDidMount for ' + this.state.imgId);
+		/*
+		 var log = 'PROPS-ID:' + this.props.id + " MODAL-ID: " + this.state.imgId;
+		 log += '\t PROPS-SRC:' + this.props.src + '\t MODAL-SRC: ' + this.state.imgSrc;
+		console.log('ImagePreview -> componentDidMount :' + log);
+		*/
 		//$('#thumbnail-' + this.state.imgId).loadScroll($('#filterTbody'), this.state.imgId, );
-		//$('#filterRow' + this.state.imgId).loadScroll($('#filterTbody'), this.state.imgId, );
 
 		$('#filterRow' + this.state.imgId).loadScroll($('#filterTbody'), this.state.imgId, );
 
 		console.timeEnd(this.compname);
 	}
 
+	componentDidUpdate() {
+		$('#filterRow' + this.state.imgId).loadScroll($('#filterTbody'), this.state.imgId, );
+
+		/*
+		var log = 'PROPS-ID:' + this.props.id + " MODAL-ID: " + this.state.imgId;
+		log += '\t PROPS-SRC:' + this.props.src + '\t MODAL-SRC: ' + this.state.imgSrc;
+	   console.log('ImagePreview -> componentDidUpdate :' + log);	
+	   */
+	}
+
+	/* PREVIEW does not work
+	static getDerivedStateFromProps(nextProps, state) {
+		return ({imgId: nextProps.id, imgSrc: nextProps.src, images: nextProps.images})
+	  }
+	*/
+
 	init() {
 		this.setState({imgSrc: this.props.src, imgId: this.props.id, images: this.props.images});
 	}
 
+	
 	componentWillReceiveProps(nextProps) {
-		//console.log("CTRL: Bfore updating " + JSON.stringify(nextProps));
+		console.log("ImagePreview componentWillReceiveProps ->  imgId " + this.state.imgId + ' >> ' + JSON.stringify(nextProps));
 		this.modalId =  'imageModal-'+this.props.id;
-		this.setState({imgId: nextProps.id, images: nextProps.images})
+		this.setState({imgId: nextProps.id, imgSrc: nextProps.src, images: nextProps.images})
 	}
+	
 
     onImgLoad({target:img}) {
 		//console.log("Image has been loaded, " + this.props.src + " id " + this.props.id);
@@ -145,6 +166,11 @@ myWindow.document.write("<p>This is 'MsgWindow'. I am 200px wide and 100px tall!
 	render() {
 		const {width, height} = this.state.dimensions;
 
+//		console.log('ImagePreview render for ->  ImgId: ' + this.state.imgId + ', id:, ' + this.props.id 
+//		+ ' props.src: ' + this.props.src + '\tstate.src ' + this.state.imgSrc);
+
+		console.log('ImagePreview render for ' + this.props.rowIndex);
+
 		const backArrow = (!this.isFirstImage()) ? (									
 			<button type="button" onClick={this.onPrevClick.bind(this)}
 			className="btn btn-primary btn-lg download prev">
@@ -188,8 +214,9 @@ myWindow.document.write("<p>This is 'MsgWindow'. I am 200px wide and 100px tall!
 			<a  className='d-flex flex-column align-items-start' onClick={this.onImgToggle}>
 
 				<img className={'imgPreview' /*'img-thumbnail'*/}
+				key={this.props.rowIndex}
 				id={'thumbnail-' + this.state.imgId}
-				data-src={this.props.src}
+				data-src={this.state.imgSrc}
 				onLoad={this.onImgLoad}
 				onError={this.onImgError}
 				alt='Loading...'

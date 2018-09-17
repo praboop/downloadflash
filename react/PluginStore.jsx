@@ -24,13 +24,40 @@ export class PluginStore {
 		this.ICON_MAP['otherIcon'] = otherIcon;
 		this.isInitDone = false;
 		this.changeListener = [];
-		// this.clearStorage();
+		//this.clearStorage();
 		this.init();
 
 	}
 
+	initInternal() {
+		var internalPref = browser.storage.local.get('internaldata');
+		var parent = this;
+		internalPref.then(jsonObject => {
+			if (_.isEmpty(jsonObject)) {
+				console.log('Internal data is not set. Setting default');
+				parent.internalData = store.INTERNAL_DATA;
+				browser.storage.local.set({'internaldata': store.INTERNAL_DATA});
+			} else {
+				console.log('Internal data is already set :' + JSON.stringify(jsonObject.internaldata));
+				parent.internalData = jsonObject.internaldata;
+			}
+		})
+	}
+
+	getInternal() {
+		return this.internalData;
+	}
+
+	updateInternal(newInternal) {
+		this.internal = newInternal;
+		browser.storage.local.set({'internaldata': newInternal});
+	}
+
 	init(callback) {
 		if (!this.isInitDone) {
+
+			this.initInternal();
+
 			//console.log("STARTED TO LOAD STORE...")
 			var gettingPref = browser.storage.local.get('preferences');			
 			var parent = this;

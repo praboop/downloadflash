@@ -15,9 +15,10 @@
 
             var img = $('#thumbnail-' + imgId);
 
+            // console.log('jQuery.loadScroll -> load scroll is invoked for: ' + img.attr('data-src'));
+
             if (img.attr('data-src')) {
-                img.attr('src',
-                img.attr('data-src'));
+                img.attr('src', img.attr('data-src'));
                 img.removeAttr('data-src');
                 
                 if (duration) {
@@ -46,14 +47,14 @@
                 var cond = (c > 0) && (b - c > 0);
                 var log = (c) + ' > 0 ' + " AND " + (b - c) + ' > 0';
 
-
-                console.log(this.getAttribute('id') + ' -> inview ? ' + (cond) + ". bounds " + JSON.stringify(arr) + ' cond: ' + log)
+                //console.log("jQuery.loadScroll winScroll -> " + this.getAttribute('id') + ' -> inview ? ' + (cond) + ". bounds " + JSON.stringify(arr) + ' cond: ' + log)
                     
                 return cond;
                 
             });
             
             loaded = inview.trigger('loadScroll');
+
             images = images.not(loaded);
                     
         });

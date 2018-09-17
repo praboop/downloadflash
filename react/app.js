@@ -11,6 +11,7 @@ import downloadStatusReducer from './reducers/FileDownloadStatusReducer'
 import {g_diskStore} from './PluginStore.jsx'
 
 import Download from './Download.jsx'
+import Welcome from './Welcome.jsx'
 //import TestScroll from './TestScroll.jsx';
 //import Test from './Test.jsx'
 
@@ -32,6 +33,19 @@ window.extension.downloadlinks.showPopup = function () {
 	console.log (' ======= RENDERING POPUP =======')
 
 	g_diskStore.init(() => {
+
+		console.log('After diskstore init, internal is: ' + JSON.stringify(g_diskStore.getInternal()));
+
+		if (!window.extension.downloadlinks.welcomeDismissed) {
+			if (!g_diskStore.getInternal().doNotShowWelcome) {
+				console.log("Rendering welcome");
+				render (
+					<Welcome/>,
+					document.getElementById('app')
+				)
+				return;
+			}
+		}
 
 		let combinedReducers = combineReducers({
 			extensionData: extensionReducer,

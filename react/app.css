@@ -134,6 +134,10 @@ li {
 		width: 799px;
 	}
 
+	.dl-mr-6px {
+		margin-right: 6px;
+	}
+
 	.full-height {
 		height: 599px;
 	}
