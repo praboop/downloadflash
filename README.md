@@ -3,10 +3,17 @@ Firefox plugin that would allow the user to specify what kind of files to downlo
 
 ---
 
+# Build:
+1. Install npm
+2. npm run build
+3. The dist directory has the build artifacts
+
+---
+
+
 # Installation:
-1. download all files to local directory.
-2. Open "about:debugging" in Firefox, click "Load Temporary Add-on" and select any file in your extension's directory:
-3. The extension will now be installed, and will stay until you restart Firefox.
+1. Open "about:debugging" in Firefox, click "Load Temporary Add-on" and select any file in your dist directory:
+2. The extension will now be installed, and will stay until you restart Firefox.
 
 ---
 
